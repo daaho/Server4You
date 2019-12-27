@@ -1,0 +1,74 @@
+version: '3.7'
+
+services:
+  nginx-proxy:
+    hostname: nginx-proxy
+    container_name: nginx-proxy
+    image: jwilder/nginx-proxy:alpine
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "2m"
+        max-file: "10"
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - conf.d:/etc/nginx/conf.d
+      - vhost.d:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - certs:/etc/nginx/certs:ro
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./uploadsize.conf:/etc/nginx/conf.d/uploadsize.conf:ro
+    networks:
+      - proxy-network
+      - monitoring
+      - backend-network
+      - backend-test-network
+    restart: unless-stopped
+    labels:
+      - com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy
+      - com.centurylinklabs.watchtower.enable="false"
+
+
+  letsencrypt-nginx-proxy-companion:
+    hostname: letsencrypt-nginx-proxy-companion
+    container_name: letsencrypt-nginx-proxy-companion
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - certs:/etc/nginx/certs:rw
+      - conf.d:/etc/nginx/conf.d:ro
+      - html:/usr/share/nginx/html:rw
+      - vhost.d:/etc/nginx/vhost.d
+    restart: unless-stopped
+    networks:
+      - proxy-network
+    labels:
+      - com.centurylinklabs.watchtower.enable="false"
+
+
+networks:
+  monitoring:
+    name: monitoring
+    external: true
+  proxy-network:
+    name: proxy-network
+    external: true
+  backend-network:
+    name: backend-network
+    external: true
+  backend-test-network:
+    name: backend-test-network
+    external: true
+
+
+volumes:
+  conf.d:
+    external: true
+  vhost.d:
+    external: true
+  html:
+    external: true
+  certs:
+    external: true
