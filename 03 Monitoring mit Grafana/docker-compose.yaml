@@ -1,0 +1,118 @@
+version: '3.7'
+services:
+
+  grafana:
+    image: grafana/grafana:latest
+    hostname: grafana
+    container_name: grafana
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "2m"
+        max-file: "10"
+    expose:
+      - "3000"
+    networks:
+      - monitoring
+    links:
+      - prometheus
+    volumes:
+      - grafana:/var/lib/grafana
+
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - "VIRTUAL_HOST=grafana.stefan-hoenes.de"
+      - "LETSENCRYPT_HOST=grafana.stefan-hoenes.de"
+      - "LETSENCRYPT_EMAIL=stefan.hoenes@gmx.de"
+      - "VIRTUAL_PORT=3000"
+
+  prometheus:
+    image: prom/prometheus:latest
+    hostname: prometheus
+    container_name: prometheus
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "2m"
+        max-file: "10"
+    volumes:
+      - prometheus:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    networks:
+      - monitoring
+    links:
+      - prometheus-node-exporter
+      - cadvisor
+    ports:
+      - "127.0.0.1:9090:9090"
+    extra_hosts:
+      - "docker-host:188.138.115.30"
+
+
+
+  prometheus-node-exporter:
+    image: prom/node-exporter:latest
+    hostname: prometheus-node-exporter
+    container_name: prometheus-node-exporter
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "2m"
+        max-file: "10"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+    network_mode: host
+    ports:
+      - "127.0.0.1:9100:9100"
+    pid: "host"
+
+  cadvisor:
+    image: google/cadvisor:latest
+    hostname: cadvisor
+    container_name: cadvisor
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "2m"
+        max-file: "10"
+    expose:
+    - "8080"
+    volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - monitoring
+
+
+volumes:
+  grafana:
+    external: true
+  prometheus:
+    external: true
+
+
+networks:
+  monitoring:
+    external:
+      name: monitoring
