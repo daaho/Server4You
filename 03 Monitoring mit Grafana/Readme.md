@@ -10,3 +10,7 @@ export GRAFANA_PASSWORD=<geheimesPasswort>
 
 * docker volume create grafana
 * docker volume create prometheus
+
+3. Grafana: Prometheus datasource hinzufügen
+
+http://prometheus:9090
