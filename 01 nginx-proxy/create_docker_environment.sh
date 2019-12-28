@@ -1,6 +1,7 @@
-docker network create proxy-network
+docker network create proxy
 docker network create backend
 docker network create backend-test
+docker network create monitoring
 
 docker volume create conf.d
 docker volume create vhost.d
