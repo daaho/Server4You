@@ -37,6 +37,15 @@ services:
     networks:
       - backend
 
+  netshoot:
+    image: nicolaka/netshoot
+    container_name: netshoot
+    hostname: netshoot
+    restart: unless-stopped
+    command: "tail -f /dev/null"
+    networks: 
+      - backend
+
 volumes:
   piwigo:
     external: true
