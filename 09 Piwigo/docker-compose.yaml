@@ -37,6 +37,9 @@ services:
     networks:
       - backend
 
+volumes:
+  piwigo-db:
+    external: true
 
 networks:
   backend:
