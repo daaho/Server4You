@@ -29,6 +29,7 @@ services:
     restart: unless-stopped
     volumes:
       - piwigo-db:/var/lib/mysql
+	  - /var/lib/docker/volumes/nextcloud/_data/data/Bilder/files/Bilder:/config/www/gallery/galleries/:ro
     environment:
       MYSQL_DATABASE: piwigo
       MYSQL_USER: piwigo
