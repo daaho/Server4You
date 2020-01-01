@@ -19,6 +19,24 @@ services:
     restart: unless-stopped
     networks:
       - backend
+    depends_on:
+      - piwigo-db
+
+  piwigo-db:
+    container_name: piwigo-db
+    hostname: piwigo-db
+    image: mariadb:10.4
+    restart: unless-stopped
+    volumes:
+      - piwigo-db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: piwigo
+      MYSQL_USER: piwigo
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    networks:
+      - backend
+
 
 networks:
   backend:
