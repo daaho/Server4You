@@ -7,22 +7,27 @@
 Von Webseite   https://github.com/restic/restic/releases/tag/v0.9.5   die Version
 restic_0.9.5_linux_amd64.bz2 herunterladen
 
-wget https://github.com/restic/restic/releases/download/v0.9.5/restic_0.9.5_linux_amd64.bz2
+wget https://github.com/restic/restic/releases/download/v0.9.6/restic_0.9.6_linux_amd64.bz2
 
-Datei auspacken:   bunzip2 restic_0.9.5_linux_amd64.bz2
+Datei auspacken:   bunzip2 restic_0.9.6_linux_amd64.bz2
 
-Datei kopieren und umbenennen:   cp restic_0.9.5_linux_amd64 /usr/bin/restic
+Datei kopieren und umbenennen:   cp restic_0.9.6_linux_amd64 /usr/bin/restic
 Ausführbar machen:   chmod 755 /usr/bin/restic
 restic version
+
+### Installation fuse
+
+yum install -y fuse
 
 
 ## Backup
 
 ### Initialisieren des Repo's
 
-restic -r b2:SGStern-Backup-WordPress:/ init
+restic -r b2:Datensicherung-Daten:/ init
+restic -r b2:Datensicherung-Bilder:/ init
+restic -r b2:Datensicherung-Musik:/ init
 
-restic -r b2:SGStern-Backup-WordPress-DB:/ init
 
 ### Backup-Skript
 
@@ -51,7 +56,7 @@ echo "#-------------------------------------------------------------------------
 
 # Backup WordPress Volume
 echo "docker pause wordpress" >> /var/log/restic_backup.log
-export RESTIC_REPOSITORY='b2:SGStern-Backup-WordPress'
+export RESTIC_REPOSITORY='b2:Datensicherung-Bilder'
 docker pause wordpress >> /var/log/restic_backup.log
 echo "docker pause wordpress wurde mit ReturnCode $? beendet" >> /var/log/restic_backup.log
 

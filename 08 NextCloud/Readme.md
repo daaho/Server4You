@@ -35,3 +35,17 @@ Benutzer:
    * Passwort: <siehe KeePass>
    * Bei erweitere Parameter: Schreibgeschützt anklicken
    
+   
+
+## Kopieren von Dateien in den Container
+
+z.B. den Ordner../ELO mit allen Subdirs in das Verzeichnis .../Interpreten/ELO/...
+
+docker cp /tmp/Musik/Interpreten/ELO nextcloud:/var/www/html/data/Musik/files/Musik/Interpreten
+
+
+## Rescan der Dateien
+
+z.B. für den Benutzer "Musik"
+
+docker exec -u www-data nextcloud php occ files:scan Musik

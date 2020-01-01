@@ -16,3 +16,7 @@ docker exec -u www-data nextcloud php occ --no-warnings app:install onlyoffice
 docker exec -u www-data nextcloud php occ --no-warnings config:system:set onlyoffice DocumentServerUrl --value="/ds-vpath/"
 docker exec -u www-data nextcloud php occ --no-warnings config:system:set onlyoffice DocumentServerInternalUrl --value="http://nextcloud-onlyoffice/"
 docker exec -u www-data nextcloud php occ --no-warnings config:system:set onlyoffice StorageUrl --value="http://nextcloud-web/"
+
+# Anpassen an Reverse Proxy
+# https://help.nextcloud.com/t/connection-wizard-is-looping-between-log-in-and-grant-access/46809
+docker exec -u www-data nextcloud php occ --no-warnings config:system:set overwriteprotocol --value="https"
