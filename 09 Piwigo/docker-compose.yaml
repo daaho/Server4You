@@ -13,7 +13,7 @@ services:
       - LETSENCRYPT_HOST=bilder.stefan-hoenes.de
       - LETSENCRYPT_EMAIL=stefan@hoenes-gerlingen.de
     volumes:
-      - /path/to/appdata/config:/config
+      - piwigo:/config
     expose:
       - '80'
     restart: unless-stopped
@@ -38,6 +38,8 @@ services:
       - backend
 
 volumes:
+  piwigo:
+    external: true
   piwigo-db:
     external: true
 
