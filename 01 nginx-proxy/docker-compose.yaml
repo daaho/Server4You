@@ -23,6 +23,7 @@ services:
     networks:
       - proxy
       - monitoring
+      - logging
       - backend
       - backend-test
     restart: unless-stopped
@@ -51,6 +52,9 @@ services:
 networks:
   monitoring:
     name: monitoring
+    external: true
+  logging:
+    name: logging
     external: true
   proxy:
     name: proxy
