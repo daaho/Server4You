@@ -1,0 +1,26 @@
+version: "3.7"
+
+services:
+
+  dummy-web-server:
+    hostname: dummy-web-server
+    container_name: dummy-web-server
+    image: balluff/simplewebserver
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+
+    environment:
+      VIRTUAL_HOST: stefan-hoenes.de
+      LETSENCRYPT_HOST: stefan-hoenes.de
+      LETSENCRYPT_EMAIL: stefan.hoenes@gmx.de
+      VIRTUAL_PORT: 3000
+
+    networks:
+      - backend
+
+networks:
+  backend:
+    name: backend
+    external: true
+

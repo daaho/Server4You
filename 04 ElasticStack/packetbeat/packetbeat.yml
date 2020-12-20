@@ -1,0 +1,55 @@
+name: zulu1102
+max_procs: 4
+
+
+packetbeat.interfaces.device: enp2s0
+packetbeat.interfaces.type: af_packet
+packetbeat.interfaces.buffer_size_mb: 512
+
+
+packetbeat.flows:
+  timeout: 30s
+  period: 10s
+
+packetbeat.protocols.icmp:
+  enabled: true
+
+packetbeat.protocols.dns:
+  ports: [53]
+  include_authorities: true
+  include_additionals: true
+
+packetbeat.protocols.http:
+  ports: [80, 5601, 9200, 8080, 8081, 5000, 8002]
+  real_ip_header: "X-Forwarded-For"
+
+packetbeat.protocols.memcache:
+  ports: [11211]
+
+packetbeat.protocols.mysql:
+  ports: [3306]
+
+packetbeat.protocols.pgsql:
+  ports: [5432]
+
+packetbeat.protocols.redis:
+  ports: [6379]
+
+packetbeat.protocols.thrift:
+  ports: [9090]
+
+packetbeat.protocols.mongodb:
+  ports: [27017]
+
+packetbeat.protocols.cassandra:
+  ports: [9042]
+
+packetbeat.protocols.tls:
+  ports: [22, 443, 993, 995, 5223, 8443, 8883, 9243]
+
+processors:
+- add_cloud_metadata: ~
+
+output.elasticsearch:
+  hosts: [localhost:9200]
+#  index: packetbeat

@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+
+  openproject:
+
+    container_name: openproject
+    hostname: openproject
+    image: openproject/community:latest
+    environment:
+      EMAIL_DELIVERY_METHOD: smtp
+      SMTP_ADDRESS: smtp.sendgrid.net
+      SMTP_PORT: 587
+      SMTP_DOMAIN: "your.domain.com"
+      SMTP_AUTHENTICATION: login
+      SMTP_ENABLE_STARTTLS_AUTO: "true"
+      SMTP_USER_NAME: "apikey"
+      SMTP_PASSWORD: "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"
+      VIRTUAL_HOST: "openproject.stefan-hoenes.de"
+      VIRTUAL_PORT: "8080"
+      LETSENCRYPT_HOST: "openproject.stefan-hoenes.de"
+      LETSENCRYPT_EMAIL: "stefan@hoenes-gerlingen.de"
+    volumes:
+      - openproject:/var/openproject/assets
+      - openproject-db:/var/openproject/pgdata
+      - openproject-logs:/var/log/supervisor
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      - backend
+
+volumes:
+  openproject:
+    external: true
+  openproject-db:
+    external: true
+  openproject-logs:
+    external: true
+
+networks:
+  backend:
+    external:
+      name: backend

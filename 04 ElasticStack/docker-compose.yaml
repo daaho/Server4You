@@ -1,0 +1,63 @@
+version: '3.7'
+services:
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana-oss:7.5.2
+    hostname: kibana
+    container_name: kibana
+    restart: unless-stopped
+    expose:
+      - "5601"
+    environment:
+      - "VIRTUAL_HOST=kibana.stefan-hoenes.de"
+      - "LETSENCRYPT_HOST=kibana.stefan-hoenes.de"
+      - "LETSENCRYPT_EMAIL=stefan.hoenes@gmx.de"
+      - "VIRTUAL_PORT=5601"
+    networks:
+      - logging
+    links:
+      - elasticsearch
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.5.2
+    hostname: elasticsearch
+    container_name: elasticsearch
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:9200:9200
+      - 127.0.0.1:9300:9300
+    environment:
+      - "discovery.type=single-node"
+    networks:
+      - logging
+
+  packetbeat:
+    image: docker.elastic.co/beats/packetbeat-oss:7.5.2
+    hostname: packetbeat
+    container_name: packetbeat
+    restart: unless-stopped
+    volumes:
+      - ./packetbeat/packetbeat.yml:/usr/share/packetbeat/packetbeat.yml:ro
+    environment:
+      - setup.kibana.host=kibana:5601
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    network_mode: host
+    pid: "host"
+
+
+
+volumes:
+  kibana:
+    external: true
+  elastic:
+    external: true
+  elastic-data:
+    external: true
+
+
+networks:
+  logging:
+    external:
+      name: logging
